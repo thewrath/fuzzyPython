@@ -4,23 +4,25 @@ from Tkinter import *
 from PIL import ImageTk
 from math import *
 from tkFileDialog import *
+from Tkinter import *
 import os
 import PIL.Image
 
-
-from Tkinter import *
-
+#Class principale
 class App:
-
+    #constructeur 
     def __init__(self, master):
 
         frame = Frame(master)
         frame.pack()
+        #le panel pour l'affichage de l'image 
+        self.panel = Label(root)
         #%de pixelisation
         self.type = "Fuzzy"
         self.level = 1
         self.file = None
         self.image = None
+        #les boutons 
         self.select = Button(frame, text="Select File", command=self.pathSelector)
         self.select.pack(side=RIGHT)
         self.go = Button(frame, text="Go", command=self.fuzzy)
@@ -35,30 +37,31 @@ class App:
         self.fuzzy.pack(side=LEFT)
         self.scale = Scale(orient='horizontal', from_=1, to=10, command=self.changeFuzzyPurcent)
         self.scale.pack()
-    
+        self.panel.pack(side = "bottom", fill = "both", expand = "yes")
+        
+    #methode pour changer le pourcentage de floutage (int valeur)
     def changeFuzzyPurcent(self, val):
         self.level = val
         
+    #methode pour selectionner une image qui est affichee dans le panel    
     def pathSelector(self):
-        # selection du fichier
         self.file = askopenfilename(title='Selectionner un fichier ')
         self.displayImage(self.file)
     
+    #methode pour "actualiser" l'image du panel  
     def displayImage(self, path):
         self.image = ImageTk.PhotoImage(PIL.Image.open(path))
-        self.panel = Label(root, image = self.image)
-        self.panel.pack(side = "bottom", fill = "both", expand = "yes") 
-    
-    def destroyImage(self):
-        self.panel.config(image='')
+        self.panel.configure(image = self.image)
+        self.panel.image = self.image
+        self.panel.pack(side = "bottom", fill = "both", expand = "yes")
         
+    #methode pour changer le type de floutage rouge, bleu, vert, normal
     def setType(self,newType):
         self.type = newType
-        print(self.type)
-        
+    
+    #methode pour le floutage 
     def fuzzy(self):
         #ouverture de l'image
-        print("ok")
         type = self.type
         img = PIL.Image.open(self.file)
         #niveau de pixelisation
@@ -112,7 +115,6 @@ class App:
             i += level;
         #sauvegarde de l'image 
         img2.save("temp/temp.png")
-        self.destroyImage()
         self.displayImage("temp/temp.png")      
   
     
@@ -120,6 +122,4 @@ class App:
 root = Tk()
 app = App(root)
 root.mainloop()
-root.destroy() # optional; see description below
-
-
+root.destroy()
